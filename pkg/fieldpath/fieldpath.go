@@ -66,7 +66,7 @@ func ExtractFieldPathAsString(obj interface{}, fieldPath string) (string, error)
 				return "", fmt.Errorf("invalid key subscript in %s: %s", fieldPath, strings.Join(errs, ";"))
 			}
 			return accessor.GetAnnotations()[subscript], nil
-		case "metadata.labels":
+		case "metadata.labels", "node.labels":
 			if errs := validation.IsQualifiedName(subscript); len(errs) != 0 {
 				return "", fmt.Errorf("invalid key subscript in %s: %s", fieldPath, strings.Join(errs, ";"))
 			}
@@ -87,6 +87,8 @@ func ExtractFieldPathAsString(obj interface{}, fieldPath string) (string, error)
 		return accessor.GetNamespace(), nil
 	case "metadata.uid":
 		return string(accessor.GetUID()), nil
+	case "node.labels":
+		return FormatMap(accessor.GetLabels()), nil
 	}
 
 	return "", fmt.Errorf("unsupported fieldPath: %v", fieldPath)

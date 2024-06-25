@@ -65,7 +65,7 @@ func ConvertDownwardAPIFieldLabel(version, label, value string) (string, string,
 
 	if path, _, ok := fieldpath.SplitMaybeSubscriptedPath(label); ok {
 		switch path {
-		case "metadata.annotations", "metadata.labels":
+		case "metadata.annotations", "metadata.labels", "node.labels":
 			return label, value, nil
 		default:
 			return "", "", fmt.Errorf("field label does not support subscript: %s", label)
@@ -86,7 +86,8 @@ func ConvertDownwardAPIFieldLabel(version, label, value string) (string, string,
 		"status.hostIP",
 		"status.hostIPs",
 		"status.podIP",
-		"status.podIPs":
+		"status.podIPs",
+		"node.labels":
 		return label, value, nil
 	// This is for backwards compatibility with old v1 clients which send spec.host
 	case "spec.host":

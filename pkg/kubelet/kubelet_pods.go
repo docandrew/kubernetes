@@ -913,6 +913,7 @@ func (kl *Kubelet) podFieldSelectorRuntimeValue(fs *v1.ObjectFieldSelector, pod 
 		podIP = podIPs[0]
 	}
 
+	// handle regular pod fields
 	switch internalFieldPath {
 	case "spec.nodeName":
 		return pod.Spec.NodeName, nil
@@ -942,6 +943,14 @@ func (kl *Kubelet) podFieldSelectorRuntimeValue(fs *v1.ObjectFieldSelector, pod 
 	case "status.podIPs":
 		return strings.Join(podIPs, ","), nil
 	}
+
+	// handle node fields
+	path, _, _ := fieldpath.SplitMaybeSubscriptedPath(internalFieldPath)
+	if path == "node.labels" {
+		node, _ := kl.GetNode()
+		return fieldpath.ExtractFieldPathAsString(node, internalFieldPath)
+	}
+
 	return fieldpath.ExtractFieldPathAsString(pod, internalFieldPath)
 }
 

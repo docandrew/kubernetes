@@ -2608,6 +2608,7 @@ var validEnvDownwardAPIFieldPathExpressions = sets.New(
 	"status.hostIPs",
 	"status.podIP",
 	"status.podIPs",
+	"node.labels",
 )
 
 var validContainerResourceFieldPathExpressions = sets.New(
@@ -2688,6 +2689,8 @@ func validateObjectFieldSelector(fs *core.ObjectFieldSelector, expressions *sets
 		case "metadata.annotations":
 			allErrs = append(allErrs, ValidateQualifiedName(strings.ToLower(subscript), fldPath)...)
 		case "metadata.labels":
+			allErrs = append(allErrs, ValidateQualifiedName(subscript, fldPath)...)
+		case "node.labels":
 			allErrs = append(allErrs, ValidateQualifiedName(subscript, fldPath)...)
 		default:
 			allErrs = append(allErrs, field.Invalid(fldPath, path, "does not support subscript"))
